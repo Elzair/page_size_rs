@@ -1,0 +1,12 @@
+[package]
+name = "page_size"
+version = "0.1.0"
+authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
+
+[dependencies]
+
+[target.'cfg(unix)'.dependencies]
+libc = "^0.2.31"
+
+[target.'cfg(windows)'.dependencies]
+winapi = "^0.2.8"
