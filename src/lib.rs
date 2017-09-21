@@ -1,10 +1,13 @@
 #![no_std]
 //! This crate provides an easy, fast, cross-platform way to retrieve the
-//! memory page size of the current system. Modern hardware and software tend
-//! to load data into RAM (and transfer data from RAM to disk) in discrete
-//! chunk called pages. This crate provides a helper method to retrieve the size
-//! in bytes of these pages. Since the page size *should not* change during
-//! execution, this crate will cache the result after it has been called once.
+//! memory page size of the current system.
+//!
+//! Modern hardware and software tend to load data into RAM (and transfer data
+//! from RAM to disk) in discrete chunk called pages. This crate provides a
+//! helper method to retrieve the size in bytes of these pages. Since the page
+//! size *should not* change during execution, this crate will cache the result
+//! after it has been called once.
+//!
 //! To make this crate useful for writing memory allocators, it does not require
 //! (but can use) the Rust standard library. 
 //!
