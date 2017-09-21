@@ -122,6 +122,14 @@ mod windows {
     }
 }
 
+// Stub Section
+
+#[cfg(not(any(unix, windows)))]
+#[inline]
+fn get_helper() -> usize {
+    4096 // 4k is the default on many systems
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
