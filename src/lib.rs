@@ -13,8 +13,7 @@
 //!
 //! # Example
 //!
-#![cfg_attr(not(feature = "no_std"), doc = " ``` ")]
-#![cfg_attr(feature = "no_std", doc = " ```no_run ")]
+//! ```
 //! extern crate page_size;
 //! println!("{}", page_size::get());
 //! ```
@@ -36,8 +35,7 @@ use std::sync::{Once, ONCE_INIT};
 ///
 /// # Example
 ///
-#[cfg_attr(not(feature = "no_std"), doc = " ``` ")]
-#[cfg_attr(feature = "no_std", doc = " ```no_run ")]
+/// ```
 /// extern crate page_size;
 /// println!("{}", page_size::get());
 /// ```
@@ -49,8 +47,7 @@ pub fn get() -> usize {
 ///
 /// # Example
 ///
-#[cfg_attr(not(feature = "no_std"), doc = " ``` ")]
-#[cfg_attr(feature = "no_std", doc = " ```no_run ")]
+/// ```
 /// extern crate page_size;
 /// println!("{}", page_size::get_granularity());
 /// ```
