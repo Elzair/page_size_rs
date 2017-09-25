@@ -11,6 +11,10 @@
 //! To make this crate useful for writing memory allocators, it does not require
 //! (but can use) the Rust standard library. 
 //!
+//! Since Windows addresses sometimes have to correspond with an allocation
+//! granularity that does not always match the size of the page, I have included
+//! a method to retrieve that as well.
+//!
 //! # Example
 //!
 //! ```
