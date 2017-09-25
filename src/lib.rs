@@ -45,6 +45,19 @@ pub fn get() -> usize {
     get_helper()
 }
 
+/// This function retrieves the system's memory allocation granularity.
+///
+/// # Example
+///
+#[cfg_attr(not(feature = "no_std"), doc = " ``` ")]
+#[cfg_attr(feature = "no_std", doc = " ```no_run ")]
+/// extern crate page_size;
+/// println!("{}", page_size::get_granularity());
+/// ```
+pub fn get_granularity() -> usize {
+    get_granularity_helper()
+}
+
 // Unix Section
 
 #[cfg(all(unix, feature = "no_std"))]
@@ -65,6 +78,14 @@ fn get_helper() -> usize {
         INIT.call_once(|| PAGE_SIZE = unix::get_unix());
         PAGE_SIZE
     }
+}
+
+// Unix does not have a specific allocation granularity.
+// The page size works well.
+#[cfg(unix)]
+#[inline]
+fn get_granularity_helper() -> usize {
+    get_helper()
 }
 
 #[cfg(unix)]
@@ -107,17 +128,50 @@ fn get_helper() -> usize {
     }
 }
 
+#[cfg(all(windows, feature = "no_std"))]
+#[inline]
+fn get_granularity_helper() -> usize {
+    static GRINIT: Once<usize> = Once::new();
+    
+    *GRINIT.call_once(windows::get_granularity_windows)
+}
+
+#[cfg(all(windows, not(feature = "no_std")))]
+#[inline]
+fn get_granularity_helper() -> usize {
+    static GRINIT: Once = ONCE_INIT;
+    static mut GRANULARITY: usize = 0;
+
+    unsafe {
+        GRINIT.call_once(|| GRANULARITY = windows::get_granulariy_windows());
+        GRANULARITY
+    }
+}
+
 #[cfg(windows)]
 mod windows {
     use super::*;
 
+    use winapi::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
+    use winapi::kernel32::GetSystemInfo;
+
     #[inline]
     pub fn get_windows() -> usize {
         unsafe {
-            let mut info: winapi::SYSTEM_INFO = mem::zeroed();
-            winapi::kernel32::GetSystemInfo(&mut info);
+            let mut info: SYSTEM_INFO = mem::zeroed();
+            GetSystemInfo(&mut info as LPSYSTEM_INFO);
 
             info.dwPageSize as usize
+        }
+    }
+
+    #[inline]
+    pub fn get_granularity_windows() -> usize {
+        unsafe {
+            let mut info: SYSTEM_INFO = mem::zeroed();
+            GetSystemInfo(&mut info as LPSYSTEM_INFO);
+
+            info.dwAllocationGranularity as usize
         }
     }
 }
@@ -138,5 +192,12 @@ mod tests {
     fn test_get() {
         #[allow(unused_variables)]
         let page_size = get();
+    }    
+
+    #[test]
+    fn test_get_granularity() {
+        #[allow(unused_variables)]
+        let granularity = get_granularity();
+        assert_eq!(granularity, 4096);
     }
 }
