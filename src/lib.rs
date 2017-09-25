@@ -13,31 +13,31 @@
 //!
 //! # Example
 //!
-#![cfg_attr(not(feature = "no-std"), doc = " ``` ")]
-#![cfg_attr(feature = "no-std", doc = " ```no_run ")]
+#![cfg_attr(not(feature = "no_std"), doc = " ``` ")]
+#![cfg_attr(feature = "no_std", doc = " ```no_run ")]
 //! extern crate page_size;
 //! println!("{}", page_size::get());
 //! ```
 
 // `const_fn` is needed for `spin::Once`.
-#![cfg_attr(feature = "no-std", feature(const_fn))]
+#![cfg_attr(feature = "no_std", feature(const_fn))]
 
-#[cfg(feature = "no-std")]
+#[cfg(feature = "no_std")]
 extern crate spin;
-#[cfg(feature = "no-std")]
+#[cfg(feature = "no_std")]
 use spin::Once;
 
-#[cfg(not(feature = "no-std"))]
+#[cfg(not(feature = "no_std"))]
 extern crate std;
-#[cfg(not(feature = "no-std"))]
+#[cfg(not(feature = "no_std"))]
 use std::sync::{Once, ONCE_INIT};
 
 /// This function retrieves the system's memory page size.
 ///
 /// # Example
 ///
-#[cfg_attr(not(feature = "no-std"), doc = " ``` ")]
-#[cfg_attr(feature = "no-std", doc = " ```no_run ")]
+#[cfg_attr(not(feature = "no_std"), doc = " ``` ")]
+#[cfg_attr(feature = "no_std", doc = " ```no_run ")]
 /// extern crate page_size;
 /// println!("{}", page_size::get());
 /// ```
@@ -47,7 +47,7 @@ pub fn get() -> usize {
 
 // Unix Section
 
-#[cfg(all(unix, feature = "no-std"))]
+#[cfg(all(unix, feature = "no_std"))]
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
@@ -55,7 +55,7 @@ fn get_helper() -> usize {
     *INIT.call_once(unix::get_unix)
 }
 
-#[cfg(all(unix, not(feature = "no-std")))]
+#[cfg(all(unix, not(feature = "no_std")))]
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once = ONCE_INIT;
@@ -87,7 +87,7 @@ mod unix {
 #[cfg(windows)]
 extern crate winapi;
 
-#[cfg(all(windows, feature = "no-std"))]
+#[cfg(all(windows, feature = "no_std"))]
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
@@ -95,7 +95,7 @@ fn get_helper() -> usize {
     *INIT.call_once(windows::get_windows)
 }
 
-#[cfg(all(windows, not(feature = "no-std")))]
+#[cfg(all(windows, not(feature = "no_std")))]
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once = ONCE_INIT;

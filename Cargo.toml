@@ -1,6 +1,6 @@
 [package]
 name = "page_size"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Provides an easy, fast, cross-platform way to retrieve the memory page size"
 readme = "README.md"
@@ -12,7 +12,7 @@ keywords = ["page", "memory", "ram", "page_size"]
 categories = ["hardware-support", "os"]
 
 [features]
-no-std = ["spin"]
+no_std = ["spin"]
 
 [dependencies]
 
