@@ -35,6 +35,14 @@ extern crate std;
 #[cfg(not(feature = "no_std"))]
 use std::sync::{Once, ONCE_INIT};
 
+#[cfg(unix)]
+extern crate libc;
+
+#[cfg(windows)]
+extern crate winapi;
+#[cfg(target_os = "windows")]
+extern crate kernel32;
+
 /// This function retrieves the system's memory page size.
 ///
 /// # Example
@@ -90,9 +98,6 @@ fn get_granularity_helper() -> usize {
 }
 
 #[cfg(unix)]
-extern crate libc;
-
-#[cfg(unix)]
 mod unix {
     use libc::{_SC_PAGESIZE, sysconf};
 
@@ -105,11 +110,6 @@ mod unix {
 }
 
 // Windows Section
-
-#[cfg(windows)]
-extern crate winapi;
-#[cfg(target_os = "windows")]
-extern crate kernel32;
 
 #[cfg(all(windows, feature = "no_std"))]
 #[inline]

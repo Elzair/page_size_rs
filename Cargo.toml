@@ -1,6 +1,6 @@
 [package]
 name = "page_size"
-version = "0.3.5"
+version = "0.4.0"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Provides an easy, fast, cross-platform way to retrieve the memory page size"
 readme = "README.md"
@@ -15,7 +15,6 @@ categories = ["os"]
 no_std = ["spin"]
 
 [dependencies]
-
 spin = { version = "^0.4.5", optional = true }
 
 [target.'cfg(unix)'.dependencies]
