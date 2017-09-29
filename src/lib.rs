@@ -153,6 +153,9 @@ fn get_granularity_helper() -> usize {
 
 #[cfg(windows)]
 mod windows {
+    #[cfg(feature = "no_std")]
+    use core::mem;
+    #[cfg(not(feature = "no_std"))]
     use std::mem;
     
     use winapi::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
