@@ -10,5 +10,8 @@ Since Windows addresses sometimes have to correspond with an allocation granular
 
 ```rust
 extern crate page_size;
-println!("{}", page_size::get());
+
+fn main() {
+    println!("{}", page_size::get());
+}
 ```
