@@ -8,7 +8,7 @@ Since Windows addresses sometimes have to correspond with an allocation granular
 
 # Example
 
-```
+```rust
 extern crate page_size;
 println!("{}", page_size::get());
 ```

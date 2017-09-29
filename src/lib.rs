@@ -17,7 +17,7 @@
 //!
 //! # Example
 //!
-//! ```
+//! ```rust
 //! extern crate page_size;
 //! println!("{}", page_size::get());
 //! ```
@@ -39,7 +39,7 @@ use std::sync::{Once, ONCE_INIT};
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// extern crate page_size;
 /// println!("{}", page_size::get());
 /// ```
@@ -51,7 +51,7 @@ pub fn get() -> usize {
 ///
 /// # Example
 ///
-/// ```
+/// ```rust
 /// extern crate page_size;
 /// println!("{}", page_size::get_granularity());
 /// ```
