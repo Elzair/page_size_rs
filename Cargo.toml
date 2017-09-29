@@ -1,6 +1,6 @@
 [package]
 name = "page_size"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Provides an easy, fast, cross-platform way to retrieve the memory page size"
 readme = "README.md"
@@ -23,3 +23,4 @@ libc = "^0.2.31"
 
 [target.'cfg(windows)'.dependencies]
 winapi = "^0.2.8"
+kernel32-sys = "^0.2.2"

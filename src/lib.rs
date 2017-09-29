@@ -66,7 +66,7 @@ pub fn get_granularity() -> usize {
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
     
-    *INIT.call_once(unix::get_unix)
+    *INIT.call_once(unix::get)
 }
 
 #[cfg(all(unix, not(feature = "no_std")))]
@@ -76,7 +76,7 @@ fn get_helper() -> usize {
     static mut PAGE_SIZE: usize = 0;
 
     unsafe {
-        INIT.call_once(|| PAGE_SIZE = unix::get_unix());
+        INIT.call_once(|| PAGE_SIZE = unix::get());
         PAGE_SIZE
     }
 }
@@ -94,12 +94,12 @@ extern crate libc;
 
 #[cfg(unix)]
 mod unix {
-    use super::*;
+    use libc::{_SC_PAGESIZE, sysconf};
 
     #[inline]
-    pub fn get_unix() -> usize {
+    pub fn get() -> usize {
         unsafe {
-            libc::sysconf(libc::_SC_PAGESIZE) as usize
+            sysconf(_SC_PAGESIZE) as usize
         }
     }
 }
@@ -108,13 +108,15 @@ mod unix {
 
 #[cfg(windows)]
 extern crate winapi;
+#[cfg(target_os = "windows")]
+extern crate kernel32;
 
 #[cfg(all(windows, feature = "no_std"))]
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
     
-    *INIT.call_once(windows::get_windows)
+    *INIT.call_once(windows::get)
 }
 
 #[cfg(all(windows, not(feature = "no_std")))]
@@ -124,7 +126,7 @@ fn get_helper() -> usize {
     static mut PAGE_SIZE: usize = 0;
 
     unsafe {
-        INIT.call_once(|| PAGE_SIZE = windows::get_windows());
+        INIT.call_once(|| PAGE_SIZE = windows::get());
         PAGE_SIZE
     }
 }
@@ -134,7 +136,7 @@ fn get_helper() -> usize {
 fn get_granularity_helper() -> usize {
     static GRINIT: Once<usize> = Once::new();
     
-    *GRINIT.call_once(windows::get_granularity_windows)
+    *GRINIT.call_once(windows::get_granularity)
 }
 
 #[cfg(all(windows, not(feature = "no_std")))]
@@ -144,20 +146,20 @@ fn get_granularity_helper() -> usize {
     static mut GRANULARITY: usize = 0;
 
     unsafe {
-        GRINIT.call_once(|| GRANULARITY = windows::get_granulariy_windows());
+        GRINIT.call_once(|| GRANULARITY = windows::get_granulariy());
         GRANULARITY
     }
 }
 
 #[cfg(windows)]
 mod windows {
-    use super::*;
-
+    use std::mem;
+    
     use winapi::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
-    use winapi::kernel32::GetSystemInfo;
+    use kernel32::GetSystemInfo;
 
     #[inline]
-    pub fn get_windows() -> usize {
+    pub fn get() -> usize {
         unsafe {
             let mut info: SYSTEM_INFO = mem::zeroed();
             GetSystemInfo(&mut info as LPSYSTEM_INFO);
@@ -167,7 +169,7 @@ mod windows {
     }
 
     #[inline]
-    pub fn get_granularity_windows() -> usize {
+    pub fn get_granularity() -> usize {
         unsafe {
             let mut info: SYSTEM_INFO = mem::zeroed();
             GetSystemInfo(&mut info as LPSYSTEM_INFO);
