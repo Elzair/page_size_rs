@@ -146,7 +146,7 @@ fn get_granularity_helper() -> usize {
     static mut GRANULARITY: usize = 0;
 
     unsafe {
-        GRINIT.call_once(|| GRANULARITY = windows::get_granulariy());
+        GRINIT.call_once(|| GRANULARITY = windows::get_granularity());
         GRANULARITY
     }
 }
