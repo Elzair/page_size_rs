@@ -11,6 +11,10 @@ repository = "https://github.com/Elzair/page_size_rs"
 keywords = ["page", "memory", "ram", "page_size"]
 categories = ["os"]
 
+[badges]
+travis-ci = { repository = "Elzair/page_size_rs" }
+appveyor = { repository = "Elzair/page_size_rs" }
+
 [features]
 no_std = ["spin"]
 
@@ -18,8 +22,8 @@ no_std = ["spin"]
 spin = { version = "^0.4.5", optional = true }
 
 [target.'cfg(unix)'.dependencies]
-libc = "^0.2.31"
+libc = "0.2"
 
 [target.'cfg(windows)'.dependencies]
-winapi = "^0.2.8"
-kernel32-sys = "^0.2.2"
+winapi = "0.2"
+kernel32-sys = "0.2"
