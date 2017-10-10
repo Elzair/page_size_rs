@@ -110,11 +110,11 @@ matrix:
       rust: nightly
     #     aarch64
     #       stable
-    - env: TARGET=aarch64-unknown-linux-musl
-      rust: stable
+    # - env: TARGET=aarch64-unknown-linux-musl
+    #  rust: stable
     #       beta
-    - env: TARGET=aarch64-unknown-linux-musl
-      rust: beta
+    # - env: TARGET=aarch64-unknown-linux-musl
+    #  rust: beta
     #       nightly
     - env: TARGET=aarch64-unknown-linux-musl
       rust: nightly
@@ -239,17 +239,6 @@ matrix:
       rust: beta
     #     nightly
     - env: TARGET=x86_64-unknown-freebsd
-      rust: nightly
-    # OpenBSD
-    #   x86_64
-    #     stable
-    - env: TARGET=x86_64-unknown-openbsd
-      rust: stable
-    #     beta
-    - env: TARGET=x86_64-unknown-openbsd
-      rust: beta
-    #     nightly
-    - env: TARGET=x86_64-unknown-openbsd
       rust: nightly
     # NetBSD
     #   x86_64

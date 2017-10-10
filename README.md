@@ -52,6 +52,5 @@ fn main() {
   * `x86_64-apple-ios`
   * `i686-unknown-freebsd`
   * `x86_64-unknown-freebsd`
-  * `x86_64-unknown-openbsd`
   * `x86_64-unknown-netbsd`
   * `asmjs-unknown-emscripten`
