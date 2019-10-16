@@ -33,15 +33,13 @@ use spin::Once;
 #[cfg(not(feature = "no_std"))]
 extern crate std;
 #[cfg(not(feature = "no_std"))]
-use std::sync::{Once, ONCE_INIT};
+use std::sync::Once;
 
 #[cfg(unix)]
 extern crate libc;
 
 #[cfg(windows)]
 extern crate winapi;
-#[cfg(target_os = "windows")]
-extern crate kernel32;
 
 /// This function retrieves the system's memory page size.
 ///
@@ -80,7 +78,7 @@ fn get_helper() -> usize {
 #[cfg(all(unix, not(feature = "no_std")))]
 #[inline]
 fn get_helper() -> usize {
-    static INIT: Once = ONCE_INIT;
+    static INIT: Once = Once::new();
     static mut PAGE_SIZE: usize = 0;
 
     unsafe {
@@ -122,7 +120,7 @@ fn get_helper() -> usize {
 #[cfg(all(windows, not(feature = "no_std")))]
 #[inline]
 fn get_helper() -> usize {
-    static INIT: Once = ONCE_INIT;
+    static INIT: Once = Once::new();
     static mut PAGE_SIZE: usize = 0;
 
     unsafe {
@@ -142,7 +140,7 @@ fn get_granularity_helper() -> usize {
 #[cfg(all(windows, not(feature = "no_std")))]
 #[inline]
 fn get_granularity_helper() -> usize {
-    static GRINIT: Once = ONCE_INIT;
+    static GRINIT: Once = Once::new();
     static mut GRANULARITY: usize = 0;
 
     unsafe {
@@ -158,8 +156,8 @@ mod windows {
     #[cfg(not(feature = "no_std"))]
     use std::mem;
     
-    use winapi::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
-    use kernel32::GetSystemInfo;
+    use winapi::um::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
+    use winapi::um::sysinfoapi::GetSystemInfo;
 
     #[inline]
     pub fn get() -> usize {
