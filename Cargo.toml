@@ -1,6 +1,6 @@
 [package]
 name = "page_size"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Provides an easy, fast, cross-platform way to retrieve the memory page size"
 readme = "README.md"
