@@ -1,4 +1,4 @@
-`page_size_rs` is a Rust crate that provides an easy, fast, cross-platform way to retrieve the memory page size of the current system. It supports any POSIX-compliant system and Windows.
+`page_size_rs` is a Rust crate that provides an easy, fast, cross-platform way to retrieve the memory page size of the current system. It supports any POSIX-compliant system, Windows, and WebAssembly.
 
 [Documentation](https://docs.rs/page_size)
 
@@ -25,7 +25,7 @@ fn main() {
 
 # Platforms
 
-`page_size_rs` should Work on Windows and any POSIX compatible system (Linux, Mac OSX, etc.).
+`page_size_rs` should Work on Windows, any POSIX compatible system (Linux, Mac OSX, etc.), and WebAssembly.
 
 `page_size_rs` is continuously tested on:
   * `x86_64-unknown-linux-gnu` (Linux)
@@ -54,3 +54,5 @@ fn main() {
   * `x86_64-unknown-freebsd`
   * `x86_64-unknown-netbsd`
   * `asmjs-unknown-emscripten`
+  * `wasm32-wasi`
+  * `wasm32-unknown-unknown`
