@@ -22,9 +22,6 @@
 //! println!("{}", page_size::get());
 //! ```
 
-// `const_fn` is needed for `spin::Once`.
-#![cfg_attr(feature = "no_std", feature(const_fn))]
-
 #[cfg(feature = "no_std")]
 extern crate spin;
 #[cfg(feature = "no_std")]
