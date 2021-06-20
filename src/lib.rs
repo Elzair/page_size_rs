@@ -9,7 +9,7 @@
 //! after it has been called once.
 //!
 //! To make this crate useful for writing memory allocators, it does not require
-//! (but can use) the Rust standard library. 
+//! (but can use) the Rust standard library.
 //!
 //! Since Windows addresses sometimes have to correspond with an allocation
 //! granularity that does not always match the size of the page, I have included
@@ -68,7 +68,7 @@ pub fn get_granularity() -> usize {
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
-    
+
     *INIT.call_once(unix::get)
 }
 
@@ -94,13 +94,11 @@ fn get_granularity_helper() -> usize {
 
 #[cfg(unix)]
 mod unix {
-    use libc::{_SC_PAGESIZE, sysconf};
+    use libc::{sysconf, _SC_PAGESIZE};
 
     #[inline]
     pub fn get() -> usize {
-        unsafe {
-            sysconf(_SC_PAGESIZE) as usize
-        }
+        unsafe { sysconf(_SC_PAGESIZE) as usize }
     }
 }
 
@@ -110,7 +108,7 @@ mod unix {
 #[inline]
 fn get_helper() -> usize {
     static INIT: Once<usize> = Once::new();
-    
+
     *INIT.call_once(windows::get)
 }
 
@@ -130,7 +128,7 @@ fn get_helper() -> usize {
 #[inline]
 fn get_granularity_helper() -> usize {
     static GRINIT: Once<usize> = Once::new();
-    
+
     *GRINIT.call_once(windows::get_granularity)
 }
 
@@ -152,9 +150,9 @@ mod windows {
     use core::mem;
     #[cfg(not(feature = "no_std"))]
     use std::mem;
-    
-    use winapi::um::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
+
     use winapi::um::sysinfoapi::GetSystemInfo;
+    use winapi::um::sysinfoapi::{LPSYSTEM_INFO, SYSTEM_INFO};
 
     #[inline]
     pub fn get() -> usize {
@@ -188,12 +186,12 @@ fn get_helper() -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_get() {
         #[allow(unused_variables)]
         let page_size = get();
-    }    
+    }
 
     #[test]
     fn test_get_granularity() {
