@@ -1,0 +1,2 @@
+[target.'cfg(all(not(target_os = "emscripten"), target_family = "wasm"))']
+runner = 'wasm-bindgen-test-runner'

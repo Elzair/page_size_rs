@@ -111,7 +111,7 @@ mod unix {
 
 // WebAssembly does not have a specific allocation granularity.
 // The page size works well.
-#[cfg(all(not(target_os = "emscripten"), any(target_arch = "wasm32", target_arch = "wasm64")))]
+#[cfg(all(not(target_os = "emscripten"), target_family = "wasm"))]
 #[inline]
 fn get_granularity_helper() -> usize {
     // <https://webassembly.github.io/spec/core/exec/runtime.html#page-size>
@@ -210,6 +210,25 @@ mod tests {
     }    
 
     #[test]
+    fn test_get_granularity() {
+        #[allow(unused_variables)]
+        let granularity = get_granularity();
+    }
+}
+
+/// Normal tests will do nothing inside WASM
+#[cfg(all(test, not(target_os = "emscripten"), target_family = "wasm"))]
+mod wasm_tests {
+    use super::*;
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn test_get() {
+        #[allow(unused_variables)]
+        let page_size = get();
+    }    
+
+    #[wasm_bindgen_test]
     fn test_get_granularity() {
         #[allow(unused_variables)]
         let granularity = get_granularity();
