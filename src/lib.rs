@@ -9,7 +9,7 @@
 //! after it has been called once.
 //!
 //! To make this crate useful for writing memory allocators, it does not require
-//! (but can use) the Rust standard library. 
+//! (but can use) the Rust standard library.
 //!
 //! Since Windows addresses sometimes have to correspond with an allocation
 //! granularity that does not always match the size of the page, I have included
@@ -22,24 +22,11 @@
 //! println!("{}", page_size::get());
 //! ```
 
-// `const_fn` is needed for `spin::Once`.
-#![cfg_attr(feature = "no_std", feature(const_fn))]
-
-#[cfg(feature = "no_std")]
-extern crate spin;
-#[cfg(feature = "no_std")]
-use spin::Once;
-
-#[cfg(not(feature = "no_std"))]
+// wasm test runtime needs std
+#[cfg(all(test, not(target_os = "emscripten"), target_family = "wasm"))]
 extern crate std;
-#[cfg(not(feature = "no_std"))]
-use std::sync::Once;
 
-#[cfg(unix)]
-extern crate libc;
-
-#[cfg(windows)]
-extern crate winapi;
+use once_cell::race::OnceNonZeroUsize;
 
 /// This function retrieves the system's memory page size.
 ///
@@ -67,24 +54,11 @@ pub fn get_granularity() -> usize {
 
 // Unix Section
 
-#[cfg(all(unix, feature = "no_std"))]
+#[cfg(unix)]
 #[inline]
 fn get_helper() -> usize {
-    static INIT: Once<usize> = Once::new();
-    
-    *INIT.call_once(unix::get)
-}
-
-#[cfg(all(unix, not(feature = "no_std")))]
-#[inline]
-fn get_helper() -> usize {
-    static INIT: Once = Once::new();
-    static mut PAGE_SIZE: usize = 0;
-
-    unsafe {
-        INIT.call_once(|| PAGE_SIZE = unix::get());
-        PAGE_SIZE
-    }
+    static PAGE_SIZE: OnceNonZeroUsize = OnceNonZeroUsize::new();
+    PAGE_SIZE.get_or_init(unix::get).get()
 }
 
 // Unix does not have a specific allocation granularity.
@@ -97,92 +71,81 @@ fn get_granularity_helper() -> usize {
 
 #[cfg(unix)]
 mod unix {
-    use libc::{_SC_PAGESIZE, sysconf};
+    use core::num::NonZeroUsize;
+
+    use libc::{sysconf, _SC_PAGESIZE};
 
     #[inline]
-    pub fn get() -> usize {
-        unsafe {
-            sysconf(_SC_PAGESIZE) as usize
-        }
+    pub fn get() -> NonZeroUsize {
+        unsafe { NonZeroUsize::new(sysconf(_SC_PAGESIZE) as usize).unwrap() }
     }
+}
+
+// WebAssembly section
+
+#[cfg(all(not(target_os = "emscripten"), target_family = "wasm"))]
+#[inline]
+fn get_helper() -> usize {
+    // <https://webassembly.github.io/spec/core/exec/runtime.html#page-size>
+    65536
+}
+
+// WebAssembly does not have a specific allocation granularity.
+// The page size works well.
+#[cfg(all(not(target_os = "emscripten"), target_family = "wasm"))]
+#[inline]
+fn get_granularity_helper() -> usize {
+    get_helper()
 }
 
 // Windows Section
 
-#[cfg(all(windows, feature = "no_std"))]
+#[cfg(windows)]
 #[inline]
 fn get_helper() -> usize {
-    static INIT: Once<usize> = Once::new();
-    
-    *INIT.call_once(windows::get)
+    static PAGE_SIZE: OnceNonZeroUsize = OnceNonZeroUsize::new();
+    PAGE_SIZE.get_or_init(windows::get).get()
 }
 
-#[cfg(all(windows, not(feature = "no_std")))]
-#[inline]
-fn get_helper() -> usize {
-    static INIT: Once = Once::new();
-    static mut PAGE_SIZE: usize = 0;
-
-    unsafe {
-        INIT.call_once(|| PAGE_SIZE = windows::get());
-        PAGE_SIZE
-    }
-}
-
-#[cfg(all(windows, feature = "no_std"))]
+#[cfg(windows)]
 #[inline]
 fn get_granularity_helper() -> usize {
-    static GRINIT: Once<usize> = Once::new();
-    
-    *GRINIT.call_once(windows::get_granularity)
-}
-
-#[cfg(all(windows, not(feature = "no_std")))]
-#[inline]
-fn get_granularity_helper() -> usize {
-    static GRINIT: Once = Once::new();
-    static mut GRANULARITY: usize = 0;
-
-    unsafe {
-        GRINIT.call_once(|| GRANULARITY = windows::get_granularity());
-        GRANULARITY
-    }
+    static GRANULARITY: OnceNonZeroUsize = OnceNonZeroUsize::new();
+    GRANULARITY.get_or_init(windows::get_granularity).get()
 }
 
 #[cfg(windows)]
 mod windows {
-    #[cfg(feature = "no_std")]
     use core::mem;
-    #[cfg(not(feature = "no_std"))]
-    use std::mem;
-    
-    use winapi::um::sysinfoapi::{SYSTEM_INFO, LPSYSTEM_INFO};
+    use core::num::NonZeroUsize;
+
     use winapi::um::sysinfoapi::GetSystemInfo;
+    use winapi::um::sysinfoapi::{LPSYSTEM_INFO, SYSTEM_INFO};
 
     #[inline]
-    pub fn get() -> usize {
+    pub fn get() -> NonZeroUsize {
         unsafe {
             let mut info: SYSTEM_INFO = mem::zeroed();
             GetSystemInfo(&mut info as LPSYSTEM_INFO);
 
-            info.dwPageSize as usize
+            NonZeroUsize::new(info.dwPageSize as usize).unwarp()
         }
     }
 
     #[inline]
-    pub fn get_granularity() -> usize {
+    pub fn get_granularity() -> NonZeroUsize {
         unsafe {
             let mut info: SYSTEM_INFO = mem::zeroed();
             GetSystemInfo(&mut info as LPSYSTEM_INFO);
 
-            info.dwAllocationGranularity as usize
+            NonZeroUsize::new(info.dwAllocationGranularity as usize).unwarp()
         }
     }
 }
 
 // Stub Section
 
-#[cfg(not(any(unix, windows)))]
+#[cfg(not(any(unix, windows, target_family = "wasm")))]
 #[inline]
 fn get_helper() -> usize {
     4096 // 4k is the default on many systems
@@ -191,14 +154,33 @@ fn get_helper() -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_get() {
         #[allow(unused_variables)]
         let page_size = get();
-    }    
+    }
 
     #[test]
+    fn test_get_granularity() {
+        #[allow(unused_variables)]
+        let granularity = get_granularity();
+    }
+}
+
+/// Normal tests will do nothing inside WASM
+#[cfg(all(test, not(target_os = "emscripten"), target_family = "wasm"))]
+mod wasm_tests {
+    use super::*;
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn test_get() {
+        #[allow(unused_variables)]
+        let page_size = get();
+    }
+
+    #[wasm_bindgen_test]
     fn test_get_granularity() {
         #[allow(unused_variables)]
         let granularity = get_granularity();

@@ -10,16 +10,21 @@ homepage = "https://github.com/Elzair/page_size_rs"
 repository = "https://github.com/Elzair/page_size_rs"
 keywords = ["page", "memory", "ram", "page_size"]
 categories = ["os"]
+edition = "2021"
 
 [badges]
 travis-ci = { repository = "Elzair/page_size_rs" }
 appveyor = { repository = "Elzair/page_size_rs" }
 
 [features]
-no_std = ["spin"]
+std = []
+default = ["std"]
 
 [dependencies]
-spin = { version = "0.5.2", optional = true }
+once_cell = { version = "1.10.0", default-features = false, features = ["race"] }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.29"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
