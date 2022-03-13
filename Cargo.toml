@@ -17,10 +17,11 @@ travis-ci = { repository = "Elzair/page_size_rs" }
 appveyor = { repository = "Elzair/page_size_rs" }
 
 [features]
-no_std = ["spin"]
+std = []
+default = ["std"]
 
 [dependencies]
-spin = { version = "0.5.2", optional = true }
+once_cell = { version = "1.10.0", default-features = false, features = ["race"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.29"
