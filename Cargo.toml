@@ -10,7 +10,7 @@ homepage = "https://github.com/Elzair/page_size_rs"
 repository = "https://github.com/Elzair/page_size_rs"
 keywords = ["page", "memory", "ram", "page_size"]
 categories = ["os"]
-edition = "2018"
+edition = "2021"
 
 [badges]
 travis-ci = { repository = "Elzair/page_size_rs" }
