@@ -19,7 +19,7 @@ appveyor = { repository = "Elzair/page_size_rs" }
 no_std = ["spin"]
 
 [dependencies]
-spin = { version = "^0.9", optional = true }
+spin = { version = "0.9.8", optional = true }
 
 [target.'cfg(unix)'.dependencies]
 libc = "^0.2"
