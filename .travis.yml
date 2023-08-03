@@ -261,3 +261,23 @@ matrix:
     #   nightly 
     - env: TARGET=asmjs-unknown-emscripten
       rust: nightly 
+    # WASI
+    #   stable
+    - env: TARGET=wasm32-wasi
+      rust: stable
+    #   beta
+    - env: TARGET=wasm32-wasi
+      rust: beta
+    #   nightly
+    - env: TARGET=wasm32-wasi
+      rust: nightly
+    # WebAssembly
+    #   stable
+    - env: TARGET=wasm32-unknown-unknown
+      rust: stable
+    #   beta
+    - env: TARGET=wasm32-unknown-unknown
+      rust: beta
+    #   nightly
+    - env: TARGET=wasm32-unknown-unknown
+      rust: nightly

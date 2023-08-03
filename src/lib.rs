@@ -107,6 +107,17 @@ mod unix {
     }
 }
 
+// WebAssembly section
+
+// WebAssembly does not have a specific allocation granularity.
+// The page size works well.
+#[cfg(all(not(target_os = "emscripten"), any(target_arch = "wasm32", target_arch = "wasm64")))]
+#[inline]
+fn get_granularity_helper() -> usize {
+    // <https://webassembly.github.io/spec/core/exec/runtime.html#page-size>
+    65536
+}
+
 // Windows Section
 
 #[cfg(all(windows, feature = "no_std"))]
